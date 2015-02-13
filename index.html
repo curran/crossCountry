@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Curran's Trip</title>
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+  <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+  <script src="https://rawgithub.com/mpetazzoni/leaflet-gpx/master/gpx.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.0/zepto.min.js"></script>
+  <style>
+    /* Make the map full screen. See http://stackoverflow.com/questions/16543446/how-to-make-leaflet-map-height-variable */
+    html, body, #map { height: 100%; }
+
+    /* Make the map flush against the sides. */
+    body { margin: 0px; }
+  </style>
+</head>
+<body>
+  <input type="text" id="url">
+  <div id="map"></div>
+  <script src="main.js"></script>
+</body>
+</html>
