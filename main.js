@@ -6,6 +6,8 @@ var map = L.map("map");
 // * bounds
 var photos = [];
 
+var presentationMode = true;
+
 // Tile URL from
 // http://leaflet-extras.github.io/leaflet-providers/preview/
 L.tileLayer("http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png").addTo(map);
@@ -37,28 +39,30 @@ var photoDimensions = {
 
 // http://leafletjs.com/reference.html#mouse-event
 map.on("click", function(e){
-  var xOffset = photoDimensions.width * scale;
-  var yOffset = photoDimensions.height * scale;
-  var x1 = e.containerPoint.x - xOffset;
-  var y1 = e.containerPoint.y - yOffset;
-  var x2 = e.containerPoint.x + xOffset;
-  var y2 = e.containerPoint.y + yOffset;
+  if(!presentationMode){
+    var xOffset = photoDimensions.width * scale;
+    var yOffset = photoDimensions.height * scale;
+    var x1 = e.containerPoint.x - xOffset;
+    var y1 = e.containerPoint.y - yOffset;
+    var x2 = e.containerPoint.x + xOffset;
+    var y2 = e.containerPoint.y + yOffset;
 
-  // http://leafletjs.com/reference.html#bounds
-  var p1 = map.containerPointToLatLng(L.point(x1, y1));
-  var p2 = map.containerPointToLatLng(L.point(x2, y2));
-  var bounds = [[p1.lat, p1.lng],[p2.lat, p2.lng]];
-  var url = imageUrl();
+    // http://leafletjs.com/reference.html#bounds
+    var p1 = map.containerPointToLatLng(L.point(x1, y1));
+    var p2 = map.containerPointToLatLng(L.point(x2, y2));
+    var bounds = [[p1.lat, p1.lng],[p2.lat, p2.lng]];
+    var url = imageUrl();
 
-  // http://leafletjs.com/reference.html#imageoverlay
-  L.imageOverlay(url, bounds).addTo(map);
+    // http://leafletjs.com/reference.html#imageoverlay
+    L.imageOverlay(url, bounds).addTo(map);
 
-  photos.push({
-    url: url,
-    bounds: bounds
-  });
+    photos.push({
+      url: url,
+      bounds: bounds
+    });
 
-  console.log(JSON.stringify(photos));
+    console.log(JSON.stringify(photos));
+  }
 
 }); 
 
@@ -75,9 +79,39 @@ function imageUrl(){
 }
 
 $.getJSON("photos.json", function(data){
+
+  // Store the data structure so it can be appended to via clicking interactions.
   photos = data;
-  console.log(photos);
-  photos.forEach(function(photo){
-    L.imageOverlay(photo.url, photo.bounds).addTo(map);
-  });
+
+  // Load photos
+  loadPhoto(0);
+
+  //photos.forEach(function(photo){
+  //  L.imageOverlay(photo.url, photo.bounds).addTo(map);
+  //});
 });
+
+// Loads a photo, waits, then loads the next photo.
+function loadPhoto(i){
+  if(i < photos.length){
+    var photo = photos[i];
+    L.imageOverlay(photo.url, photo.bounds).addTo(map);
+    setTimeout(function(){
+      loadPhoto(i + 1);
+    }, 2000);
+  }
+}
+
+// Display video from the camera on the video element.
+// Example code from http://www.html5rocks.com/en/tutorials/getusermedia/intro/
+/*navigator.getUserMedia  = navigator.getUserMedia ||
+                          navigator.webkitGetUserMedia ||
+                          navigator.mozGetUserMedia ||
+                          navigator.msGetUserMedia;
+navigator.getUserMedia({ video: true }, function (localMediaStream) {
+  var video = document.querySelector('video');
+  video.src = window.URL.createObjectURL(localMediaStream);
+}, function (e) {
+  console.log("Error " + e);
+});
+*/
